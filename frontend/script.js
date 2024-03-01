@@ -172,7 +172,7 @@ async function signup(e) {
     const res = await axios.post(baseUrl + 'signup', userData)
     if (res.status === 200) {
       // Similar behavior as an HTTP redirect
-      window.location.replace('http://127.0.0.1:5500/frontend/index.html');
+      window.location.replace(`${window.location.origin}/frontend/index.html`);
     }
   } catch (error) {
     if (error.response.status == 403) {
@@ -221,7 +221,7 @@ async function forgetPassword(e) {
   e.preventDefault();
   const email = document.getElementById('email_id').value.trim();
   const res = await axios.post(baseUrl + 'forgot-password', { email })
-  console.log(res);
+  // console.log(res);
 }
 
 function signout() {
@@ -267,8 +267,8 @@ async function buyMembership() {
     key: 'rzp_test_xlWAAcbItraEsW',
     currency: data.data.order.currency,
     order_id: data.data.order.id,
-    name: 'Your Company Name',
-    description: 'Payment for your order',
+    name: 'Expense Tracker',
+    description: 'Payment for Premium Features',
     image: 'https://your-company-logo-url.png',
     handler: async function (response) {
       const token = await axios.post(baseUrl + 'update-order', response, { headers: { Authorization: getToken() } })
@@ -291,7 +291,7 @@ async function buyMembership() {
   const rzp1 = new Razorpay(options);
   rzp1.open();
   rzp1.on('payment.failed', async function (response) {
-    console.log(response);
+    // console.log(response);
     await axios.post(baseUrl + 'update-failed-order', response, { headers: { Authorization: getToken() } })
     alert('something went wrong.')
   })
@@ -314,11 +314,7 @@ function showPremium() {
   <a onclick="signout()" class="btn btn-sm btn-primary mx-2">Logout</a>
   </li>
 
-</ul>`
-  // 
-  // 
-  // 
-  //     `
+</ul>` ;
 
 }
 
@@ -329,13 +325,13 @@ function checkPremium() {
     if (token.isPremium) {
       showPremium();
     } else {
-      accountDiv.innerHTML = `<button onclick="buyMembership()" class="btn btn-sm btn-success">Buy Membership</button><a onclick="signout()" class="btn btn-sm btn-primary mx-2">Logout</a>`
+      accountDiv.innerHTML = `<button onclick="buyMembership()" class="btn btn-sm btn-success">Buy Membership</button><a onclick="signout()" class="btn btn-sm btn-primary mx-2">Logout</a>`;
     }
   }
 
 }
 async function downloadReport() {
-  const response = await axios.get(baseUrl + 'premium/download-report', { headers: { "Authorization": getToken() } })
+  const response = await axios.get(baseUrl + 'premium/download-report', { headers: { "Authorization": getToken() } });
   //the bcakend is essentially sending a download link
   //  which if we open in browser, the file would download
   var a = document.createElement("a");
@@ -356,7 +352,7 @@ async function showLeaderboard() {
 
     const users = await axios.get(baseUrl + 'premium/get-leaderboard', { headers: { "Authorization": getToken() } })
     const usersData = users.data;
-    // console.log(usersData);
+  
 
     leaderBoard.innerHTML = '';
 
