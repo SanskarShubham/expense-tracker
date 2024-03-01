@@ -106,6 +106,7 @@ async function displayExpenses() {
     createPagination(res.data, pageNo);
 
   } catch (error) {
+    alert("please start your backend server. ")
     console.log(error);
   }
 
