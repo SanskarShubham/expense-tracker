@@ -3,8 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     displayExpenses();
   }
 });
-
-const baseUrl = "http://localhost:3000/api/";
+// http://34.207.185.225:3000/api/expenses
+const baseUrl = "http://34.207.185.225:3000/api/";
 
 const amountInput = document.getElementById('amount');
 const descriptionInput = document.getElementById('description');
