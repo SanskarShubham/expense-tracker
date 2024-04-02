@@ -3,7 +3,7 @@ require('dotenv').config({ path: './config.env'});
 const path = require('path');
 const fs =  require('fs');
 const express = require('express');
-
+const mongoose = require('mongoose');
 // MIDDLEWARE IMPORTS
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -57,11 +57,22 @@ Order.belongsTo(User);
 User.hasMany(Forgotpassword); 
 Forgotpassword.belongsTo(User);
 
-//   sequelize.sync({force:true})
- sequelize.sync()
-    .then(() => {
-        app.listen(3000);
-    }).catch((err) => {
-        console.log(err);
-    });
+// //   sequelize.sync({force:true})
+//  sequelize.sync()
+//     .then(() => { 
+//         app.listen(3000);
+//     }).catch((err) => {
+//         console.log(err);
+//     });
+    // console.log(process.env.MONGO_DATABASE_URL); 
+    // console.log(express.urlencoded(process.env.MONGO_DATABASE_URL));
+    mongoose.connect(process.env.MONGO_DATABASE_URL).then(result =>{
+        console.log('connected to mongodb'); 
+        app.listen(3000); 
+
+    }).catch(err => {
+        console.log(err); 
+    })
+
+
 

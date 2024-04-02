@@ -427,7 +427,7 @@ function createPagination(res, pgNo) {
 }
 }
 
-
+if(location.pathname === '/frontend/expense.html' ){
 // Add onchange event listener
 rowsPerPageElement.addEventListener('change', function () {
   // Get the selected value
@@ -437,3 +437,4 @@ rowsPerPageElement.addEventListener('change', function () {
   localStorage.setItem('rowsPerPage', selectedValue);
   location.reload();
 });
+}
