@@ -174,7 +174,7 @@ async function signup(e) {
     const res = await axios.post(baseUrl + 'signup', userData)
     if (res.status === 200) {
       // Similar behavior as an HTTP redirect
-      window.location.replace(`${window.location.origin}/index.html`);
+      window.location.replace(`${window.location.origin}/frontend/index.html`);
     }
   } catch (error) {
     if (error.response.status == 403) {
@@ -206,7 +206,7 @@ async function login(e) {
       alert("user logged in successfully.")
 
       // Similar behavior as an HTTP redirect
-      window.location.replace(`${window.location.origin}/expense.html`);
+      window.location.replace(`${window.location.origin}/frontend/expense.html`);
     }
   } catch (error) {
     console.log(error);
@@ -228,19 +228,19 @@ async function forgetPassword(e) {
 
 function signout() {
   localStorage.removeItem('token');
-  window.location.replace(`${window.location.origin}/index.html`);
+  window.location.replace(`${window.location.origin}/frontend/index.html`);
 }
 function isUserLoggedIN() {
 
-  if (!(window.location.pathname == "/index.html" || window.location.pathname == "/signup.html" || window.location.pathname == "/forget-password.html")) {
+  if (!(window.location.pathname == "/frontend/index.html" || window.location.pathname == "/frontend/signup.html" || window.location.pathname == "/frontend/forget-password.html")) {
     const user = localStorage.getItem('token');
     if (!user) {
-      window.location.replace(`${window.location.origin}/index.html`);
+      window.location.replace(`${window.location.origin}/frontend/index.html`);
     }
     const userObj = JSON.parse(user);
     if (userObj.isLogin !== true) {
 
-      window.location.replace(`${window.location.origin}/index.html`);
+      window.location.replace(`${window.location.origin}/frontend/index.html`);
 
     }
     return true;
@@ -252,7 +252,7 @@ function getToken() {
   if (tokenString) {
     return JSON.parse(tokenString).data;
   } else {
-    window.location.replace(`${window.location.origin}/index.html`);
+    window.location.replace(`${window.location.origin}/frontend/index.html`);
   }
 }
 
