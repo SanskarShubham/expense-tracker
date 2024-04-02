@@ -24,6 +24,11 @@ const userSchema = new mongoose.Schema({
   },
 });
 
+userSchema.methods.updateTotalExpense = function (amount) {
+   this.totalExpense = this.totalExpense + amount;
+   return this.save();
+}
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;

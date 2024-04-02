@@ -24,34 +24,6 @@ User.findAll({
   
 }
 
-    // [sequelize.fn('SUM', sequelize.col('amount')), 'totalExpense']
-    // include: [{
-    //   model: Expense,
-    //   attributes: [],
-    // }],
-    // group: ["users.id"], // Grouping by user id
-
-  //   const uploadFile = (fileName, filePath) => {
-  //     const fileContent = fs.readFileSync(filePath);
-  
-  //     const params = {
-  //         Bucket: process.env.BUCKET_NAME,
-  //         Key: fileName, // filename in S3 bucket
-  //         Body: fileContent
-  //     };
-  
-  //     s3.upload(params, (err, data) => {
-  //         if (err) {
-  //             console.error('Error uploading file:', err);
-  //         } else {
-  //             console.log('File uploaded successfully:', data.Location);
-  //         }
-  //     });
-  // };
-  
- 
-
-
 exports.getDownloadReport = async (req,res,next)=>{
 // Replace with your AWS credentials and bucket details
 const accessKeyId = process.env.AWS_ACCESS_KEY_ID;

@@ -1,7 +1,7 @@
 const express = require('express');
 const expenseController = require('../controllers/expense');
 const router = express.Router();
-const userAuth = require('../middleware/auth');
+const userAuth = require('../middlewares/auth');
 
  router.get('/expenses',userAuth.authorization, expenseController.getExpenses);
 

@@ -4,7 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 // http://34.207.185.225:3000/api/expenses
-const baseUrl = "http://34.207.185.225:3000/api/";
+// const baseUrl = "http://34.207.185.225:3000/api/";
+const baseUrl = "http://localhost:3000/api/";
 
 const amountInput = document.getElementById('amount');
 const descriptionInput = document.getElementById('description');
@@ -39,7 +40,7 @@ function addExpense() {
     amount: parseFloat(amount),
     description: description,
     category: category,
-    userId: getToken(),
+   
   };
   if (id === '') {
     // add to server
@@ -100,13 +101,13 @@ async function displayExpenses() {
     expenses.forEach((expense) => {
       const li = document.createElement('li');
       li.classList.add("list-group-item");
-      li.innerHTML = `<strong>${expense.description}</strong> - $${expense.amount.toFixed(2)} (${expense.category}) <button onclick="editExpense(${expense.id},event)" class="btn btn-sm btn-primary">Edit</button> <button class="btn btn-sm btn-danger" onclick="deleteExpense(${expense.id})">Delete</button>`;
+      li.innerHTML = `<strong>${expense.description}</strong> - $${expense.amount.toFixed(2)} (${expense.category}) <button onclick="editExpense('${expense._id}',event)" class="btn btn-sm btn-primary">Edit</button> <button class="btn btn-sm btn-danger" onclick="deleteExpense('${expense._id}')">Delete</button>`;
       expenseList.appendChild(li);
     });
     createPagination(res.data, pageNo);
 
   } catch (error) {
-    alert("please start your backend server. ")
+    // alert("please start your backend server. ")
     console.log(error);
   }
 
@@ -220,9 +221,15 @@ async function login(e) {
 
 async function forgetPassword(e) {
   e.preventDefault();
+  try {
+ 
   const email = document.getElementById('email_id').value.trim();
   const res = await axios.post(baseUrl + 'forgot-password', { email })
-  // console.log(res);
+   console.log(res);
+   alert('password reset link sent to your email id.');
+  }catch(error){
+    console.log(error);
+  }
 }
 
 function signout() {

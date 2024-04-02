@@ -1,6 +1,6 @@
 const User = require('../models/user');
 const ForgotPassword = require('../models/forgotPassword');
-const jwt = require('../util/jwtToken');
+const jwt = require('../utils/jwtToken');
 const uuid = require('uuid')
 var SibApiV3Sdk = require('sib-api-v3-sdk');
 const bcrypt = require('bcrypt');
@@ -22,7 +22,8 @@ exports.postSignup = async (req, res, next) => {
     const hashPass = await bcrypt.hash(password, 10);
 
     // Store hash in your password DB.
-    const userDetail = await User.create({ name: name, email: email, password: hashPass });
+    const userDetail = new User({ name: name, email: email, password: hashPass });
+    userDetail.save();
     return res.status(200).json({ status: true, data: userDetail });
   } catch (error) {
     return res.status(500).json({ status: false, error: error });
@@ -35,8 +36,9 @@ exports.postLogin = async (req, res, next) => {
   const password = req.body.password;
   // console.log(req.body); 
   try {
-    const user = await User.findOne({ where: { email: email } });
-    //  console.log(user);
+    const user = await User.findOne({ email: email });
+
+    console.log(user);
     if (!user) {
       return res.status(404).json({
         status: false,
@@ -64,8 +66,9 @@ exports.postLogin = async (req, res, next) => {
 };
 
 exports.postForgotPassword = async (req, res, next) => {
+  console.log(req.body);
   const email = req.body.email;
-  const user = await User.findOne({ where: { email } });
+  const user = await User.findOne({ email });
 
   if (!user) {
     return res.status(404).json({
@@ -74,10 +77,12 @@ exports.postForgotPassword = async (req, res, next) => {
     });
   }
   const id = uuid.v4();
-  user.createForgotpassword({ id, active: true })
-    .catch(err => {
-      throw new Error(err)
-    })
+  const forgotpasswordrequest = new ForgotPassword({
+    id, active: true,
+    expiresby: Date.now() + 3600000,
+    userId: user._id
+  });
+  await forgotpasswordrequest.save()
   var defaultClient = SibApiV3Sdk.ApiClient.instance;
 
   // Configure API key authorization: api-key
@@ -93,7 +98,7 @@ exports.postForgotPassword = async (req, res, next) => {
     sender,
     to: receivers,
     subject: "Forget Password",
-    htmlContent: `<a href="http://localhost:3000/api/resetpassword/${id}">Reset password</a>`
+    htmlContent: `To reset your password click on - <a href="http://localhost:3000/api/resetpassword/${id}">Reset password</a>`
   }).then(function (data) {
     return res.status(200).json({ message: 'Link to reset password sent to your mail ', success: true, emailData: data })
   }, function (error) {
@@ -104,12 +109,13 @@ exports.postForgotPassword = async (req, res, next) => {
 exports.postResetPassword = async (req, res, next) => {
 
   const id = req.params.id;
-  const forgotpasswordrequest = await ForgotPassword.findOne({ where: { id } })
-  if(!forgotpasswordrequest.active){
-    return res.status(404).json({ message:"this link is not active", success: false })
+  const forgotpasswordrequest = await ForgotPassword.findOne({ id: id })
+  if (!forgotpasswordrequest.active) {
+    return res.status(404).json({ message: "this link is not active", success: false })
   }
   if (forgotpasswordrequest) {
-    await forgotpasswordrequest.update({ active: false });
+    forgotpasswordrequest.active = false;//
+    await forgotpasswordrequest.save();
     res.status(200).send(`<html>
                                   <script>
                                       function formsubmitted(e){
@@ -133,16 +139,18 @@ exports.postUpdatePassword = async (req, res, next) => {
   try {
     const { newpassword } = req.query;
     const { id } = req.params;
-    const resetpasswordrequest = await ForgotPassword.findOne({ where: { id: id } })
-
-    const user = await User.findOne({ where: { id: resetpasswordrequest.userId } })
+    
+    const resetpasswordrequest = await ForgotPassword.findOne({ id: id })
+    console.log(resetpasswordrequest);
+// i want to use mongoose id to find the user
+    const user = await User.findOne({_id: resetpasswordrequest.userId})
 
     if (user) {
       //encrypt the password
       const hashPass = await bcrypt.hash(newpassword, 10);
-      await user.update({ password: hashPass })
-
-      res.status(201).json({ message: 'Successfully update the new password' })
+       user.password = hashPass;
+      await user.save();
+      res.status(201).json({ message: 'Password reset successfully' })
     } else {
       return res.status(404).json({ error: 'No user Exists', success: false })
     }
@@ -151,3 +159,4 @@ exports.postUpdatePassword = async (req, res, next) => {
   }
 
 }
+// $2b$10$VzywqwRcU8DVfUpRJeJlTOISiyTk74M970.rk4PIHFYuNjvcsszGW

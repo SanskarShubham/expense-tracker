@@ -2,7 +2,7 @@ const express = require('express');
 
  const order = require('../controllers/membership'); 
  const premium = require('../controllers/premium'); 
- const userAuth = require('../middleware/auth');
+ const userAuth = require('../middlewares/auth');
  const router = express.Router();
 
  router.post('/update-order',userAuth.authorization,order.postUpdateOrder);
