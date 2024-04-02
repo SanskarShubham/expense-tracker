@@ -1,4 +1,4 @@
-# MyWebApp Documentation
+# ExpenseTracker  Documentation
 
 ## Overview
 MyWebApp is a web application built with Express.js, MongoDB, Bootstrap, and Vanilla JavaScript. It provides functionalities such as user authentication, CRUD operations, integration with the Razorpay payment gateway, and a leaderboard feature for premium users.
@@ -31,40 +31,39 @@ MyWebApp is a web application built with Express.js, MongoDB, Bootstrap, and Van
 4. Access Leaderboard: Premium users can access the leaderboard feature.
 
 ## File Structure <a name="file-structure"></a>
-
 MyWebApp/
 │
-├── config/ # Configuration files
-│ ├── database.js # MongoDB configuration
-│ ├── middleware.js # Middleware configuration
-│ └── ...
+├── config/
+│   ├── database.js
+│   ├── middleware.js
+│   └── ...
 │
-├── controllers/ # Route controllers
-│ ├── authController.js # Authentication controller
-│ ├── expenseController.js # Expense controller
-│ └── ...
+├── controllers/
+│   ├── authController.js
+│   ├── expenseController.js
+│   └── ...
 │
-├── models/ # Mongoose models
-│ ├── User.js # User model
-│ ├── Expense.js # Expense model
-│ └── ...
+├── models/
+│   ├── User.js
+│   ├── Expense.js
+│   └── ...
 │
-├── public/ # Public assets
-│ ├── css/ # CSS files
-│ ├── js/ # JavaScript files
-│ └── ...
+├── public/
+│   ├── css/
+│   ├── js/
+│   └── ...
 │
-├── routes/ # Route definitions
-│ ├── authRoutes.js # Authentication routes
-│ ├── expenseRoutes.js # Expense routes
-│ └── ...
+├── routes/
+│   ├── authRoutes.js
+│   ├── expenseRoutes.js
+│   └── ...
 │
-├── views/ # View templates
-│ ├── index.ejs # Main index template
-│ ├── login.ejs # Login template
-│ └── ...
+├── views/
+│   ├── index.ejs
+│   ├── login.ejs
+│   └── ...
 │
-├── app.js # Main application file
+├── app.js
 └── ...
 
 
