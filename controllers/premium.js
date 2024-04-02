@@ -1,28 +1,36 @@
 const User = require('../models/user'); // Assuming your user model file is user.model.js
 const Expense = require('../models/expense');// Assuming your expense model file is expense.model.js
-const sequelize = require('../util/database');
+const sequelize = require('../utils/database');
 const fs =  require('fs');
 const AWS =  require('aws-sdk');
 
-exports.getLeaderboard =(req,res,next)=>{
-// Query to get the total expense for each user along with their names
-User.findAll({
-    attributes: ['id', 'name', 'totalExpense'],
-    order: [[sequelize.literal('totalExpense'), 'DESC']], // Order by totalExpense in descending order
-  }).then(users => {
+exports.getLeaderboard = async (req, res, next) => {
+  try {
+    // Aggregate pipeline to get the total expense for each user along with their names
+    const leaderboard = await User.aggregate([
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          totalExpense: 1
+        }
+      },
+      {
+        $sort: { totalExpense: -1 } // Sort by totalExpense in descending order
+      }
+    ]);
 
-    // users will contain an array of objects with id, name, and totalExpense properties
-    res.json(users);
-  }).catch(error => {
+    // Send the leaderboard data as response
+    res.json(leaderboard);
+  } catch (error) {
     console.error('Error:', error);
-    return res.status(404).json({
+    res.status(500).json({
       status: false,
-      error: error,
+      error: 'An error occurred while fetching the leaderboard data'
     });
-  
-  });
-  
-}
+  }
+};
+
 
 exports.getDownloadReport = async (req,res,next)=>{
 // Replace with your AWS credentials and bucket details
@@ -38,7 +46,7 @@ const s3 = new AWS.S3({
 });
 
 // const fileContent = fs.readFileSync('./controllers/myfile.txt');
-const expenses =  await req.user.getExpenses();
+const expenses =  await Expense.find({userId:req.user.id});
 const expenseString =  JSON.stringify(expenses)
   
 const params = {

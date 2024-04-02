@@ -1,6 +1,6 @@
 const Order = require('../models/order');
 const Razorpay = require('razorpay');
-const { generateToken } = require('../util/jwtToken');
+const { generateToken } = require('../utils/jwtToken');
 
 // Initialize Razorpay instance
 const initializeRazorpay = () => {
@@ -12,21 +12,28 @@ const initializeRazorpay = () => {
 
 exports.postUpdateOrder = async (req, res, next) => {
   try {
+    // Update order status and set user as premium
     const [updatedOrder] = await Promise.all([
-      Order.update({ paymentId: req.body.razorpay_payment_id, status: 'complete' }, { where: { orderId: req.body.razorpay_order_id, userId: req.user.id } }),
-      req.user.update({ isPremium: true })
+      Order.updateOne({ orderId: req.body.razorpay_order_id, userId: req.user._id }, { paymentId: req.body.razorpay_payment_id, status: 'complete' }),
+      req.user.updateOne({ isPremium: true })
     ]);
-    const token =  generateToken(req.user.id,req.user.name,1);
-    res.status(200).json({status:true,data:token,isLogin:true });
+
+    // Generate JWT token
+    const token = generateToken(req.user.id, req.user.name, 1);
+
+    res.status(200).json({ status: true, data: { token, isLogin: true } });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'An error occurred while updating payment' });
   }
 };
 
+
 exports.postUpdateFailedOrder = async (req, res, next) => {
   try {
-    const updatedOrder = await Order.update({ status: 'failed' }, { where: { orderId: req.body.razorpay_order_id, userId: req.user.id } });
+    // Update order status to 'failed'
+    const updatedOrder = await Order.updateOne({ orderId: req.body.razorpay_order_id, userId: req.user.id }, { status: 'failed' });
+
     res.json({ order: updatedOrder });
   } catch (error) {
     console.error(error);
@@ -39,17 +46,22 @@ exports.postCreateOrder = async (req, res, next) => {
   const razorpay = initializeRazorpay();
 
   try {
+    // Create order using Razorpay API
     const order = await razorpay.orders.create({
       amount: amount,
       currency: currency
     });
-    const createdOrder = await req.user.createOrder({
+
+    // Create order in the database
+    const createdOrder = await Order.create({
       orderId: order.id,
       paymentId: '',
       amount: order.amount / 100,
       currency: order.currency,
       status: 'pending',
+      userId: req.user.id
     });
+
     res.json({ order });
   } catch (error) {
     console.error(error);
