@@ -47,6 +47,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 // app.use('/api', userRoutes);
 // app.use('/api', membershipRoutes);
 
+app.use((req,res)=>{
+    res.sendFile(path.join(__dirname,'frontend',req.url));
+})
 //  ASSOCIATION
 // User.hasMany(Expense);
 // Expense.belongsTo(User);
